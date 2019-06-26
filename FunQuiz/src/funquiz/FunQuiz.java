@@ -12,20 +12,16 @@ package funquiz;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.GridLayout;
-import java.awt.Image;
 import javax.swing.*;
 import java.awt.event.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLWarning;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
-import javax.swing.border.Border;
 
 public class FunQuiz extends JFrame implements ActionListener{
     
@@ -153,7 +149,8 @@ public class FunQuiz extends JFrame implements ActionListener{
         
         mapelBtn[0].addActionListener((ActionEvent e) -> {
             mapelStr = mapelBtn[0].getText(); 
-            query = "SELECT firstName, lastName, email FROM Customer;";
+            System.out.println(mapelStr);
+            query = "SELECT soal, A, B, C, D, E FROM "+ mapelStr +";";
             try {
                 generateSoal();
             } catch (SQLException ex) {
@@ -211,7 +208,7 @@ public class FunQuiz extends JFrame implements ActionListener{
         JLabel Jarr[] = new JLabel[10];
         JPanel AnsPanel[] = new JPanel[10];
         ButtonGroup[] bgroup = new ButtonGroup[10];
-        RButton = new JRadioButton[10][2];
+        RButton = new JRadioButton[10][5];
         for(int i = 0; i < 10; i++){
             bgroup[i] = new ButtonGroup();
         }
@@ -222,17 +219,18 @@ public class FunQuiz extends JFrame implements ActionListener{
         while(rs.next()){
             int numColumns = rs.getMetaData().getColumnCount();
             Jarr[ptr] = new JLabel((ptr+1) + ". " + (String) rs.getObject(1));
-            RButton[ptr][0] = new JRadioButton((String) rs.getObject(2));
-            RButton[ptr][1] = new JRadioButton((String) rs.getObject(3));
-
-            bgroup[ptr].add(RButton[ptr][0]);
-            bgroup[ptr].add(RButton[ptr][1]);
+            for(int i = 0; i < 5; i++){
+                RButton[ptr][i] = new JRadioButton((String) rs.getObject(i+2));
+            }
+            for(int i = 0; i < 5; i++){
+                bgroup[ptr].add(RButton[ptr][i]);
+            }
             
             AnsPanel[ptr] = new JPanel();
-            AnsPanel[ptr].setLayout(new GridLayout(2,1));
-            AnsPanel[ptr].add(RButton[ptr][0]);
-            AnsPanel[ptr].add(RButton[ptr][1]);
-            
+            AnsPanel[ptr].setLayout(new GridLayout(1,5));
+            for(int i = 0; i < 5; i++){
+                AnsPanel[ptr].add(RButton[ptr][i]);
+            }
             ptr++;
         }
         
